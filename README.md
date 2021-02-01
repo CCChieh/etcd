@@ -16,4 +16,4 @@ docker run -itd -p 2379:2379 -p 2380:2380 etcd \
 --initial-cluster-token etcd-test-cluster
 ```
 
-etcd-v3.4.14
+etcd-v3.3.24
