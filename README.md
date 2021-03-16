@@ -5,7 +5,7 @@
 启动etcd：
 
 ```bash
-docker run -itd -p 2379:2379 -p 2380:2380 etcd \
+docker run -itd -p 2379:2379 -p 2380:2380 -v /root/etcd/:/var/etcd/data/ ccchieh/etcd \
 --name n1 \
 --initial-advertise-peer-urls http://192.168.1.5:2380 \
 --listen-peer-urls http://0.0.0.0:2380 \
