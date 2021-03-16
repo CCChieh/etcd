@@ -6,6 +6,7 @@
 
 ```bash
 export LOCAL_IP=192.168.0.115
+mkdir /root/etcd
 chmod -R 700 /root/etcd
 docker run -itd -p 2379:2379 -p 2380:2380 -v /root/etcd/:/var/etcd/data/ --restart=always --name=etcd ccchieh/etcd \
 --name n0 \
