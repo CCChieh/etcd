@@ -56,7 +56,7 @@ docker run -itd -p 2379:2379 -p 2380:2380 -v /root/etcd/:/var/etcd/data/ \
 
 ## 相关命令
 1. 停止`docker stop etcd && docker rm etcd && rm -rf /root/etcd/`
-2. 查看集群列表`docker exec -it etcd etcdctl list`
+2. 查看集群列表`docker exec -it etcd etcdctl member list`
 
 
 etcd-v3.3.24
