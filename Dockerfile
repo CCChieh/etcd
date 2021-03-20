@@ -8,6 +8,7 @@ COPY entrypoint.sh /
 RUN mkdir -p /var/etcd/data/ \
 	&& chmod +x /usr/local/bin/etcd \
 	&& chmod +x /usr/local/bin/etcdctl \
+	&& chmod +x /entrypoint.sh \
 	&& chmod 0700 /var/etcd/data/
 
 EXPOSE 2379 2380
