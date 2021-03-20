@@ -4,19 +4,28 @@
 
 启动etcd：
 
+```shell
+docker run -itd -p 2379:2379 -p 2380:2380 -v /root/etcd/:/var/etcd/data/ \
+-e ETCD_HOST=172.19.245.253 \
+-e ETCD_NAME=etcd1 \
+-e ETCD_INITIAL_CLUSTER_STATE=new \
+-e ETCD_INITIAL_CLUSTER_token=clusterToken \
+-e ETCD_INITIAL_CLUSTER="etcd1=http://172.19.245.253:2380" \
+--restart=always --name=etcd ccchieh/etcd
+```
+
+或
+
 ```bash
-export LOCAL_IP=192.168.0.115
+export ETCD_HOST=192.168.0.115
 mkdir /root/etcd
-chmod -R 700 /root/etcd
-docker run -itd -p 2379:2379 -p 2380:2380 -v /root/etcd/:/var/etcd/data/ --restart=always --name=etcd ccchieh/etcd \
---name n0 \
---initial-advertise-peer-urls http://${LOCAL_IP}:2380 \
---listen-peer-urls http://0.0.0.0:2380 \
---advertise-client-urls http://${LOCAL_IP}:2379 \
---listen-client-urls http://0.0.0.0:2379 \
---initial-cluster n0=http://${LOCAL_IP}:2380 \
---initial-cluster-state new \
---initial-cluster-token workshop
+docker run -itd -p 2379:2379 -p 2380:2380 -v /root/etcd/:/var/etcd/data/ \
+-e ETCD_HOST=${ETCD_HOST} \
+-e ETCD_NAME=etcd1 \
+-e ETCD_INITIAL_CLUSTER_STATE=new \
+-e ETCD_INITIAL_CLUSTER_token=clusterToken \
+-e ETCD_INITIAL_CLUSTER="etcd1=http://${ETCD_HOST}:2380" \
+--restart=always --name=etcd ccchieh/etcd
 ```
 
 cannot access data directory: directory "/var/etcd/data/","drwxr-xr-x" exist without desired file permission "-rwx------".
@@ -27,29 +36,27 @@ chmod -R 700 /root/etcd
 
 ## 添加新的机器
 
-n0 上执行
+etcd1 上执行
 
-docker exec -it etcd etcdctl member add n1 http://192.168.0.116:2380
+`docker exec -it etcd etcdctl member add etcd2 http://192.168.0.116:2380`
 
 另一台机器执行
 
 ```bash
-export LOCAL_IP=192.168.0.116
+export ETCD_HOST=192.168.0.116
 mkdir /root/etcd
-chmod -R 700 /root/etcd
-docker run -itd -p 2379:2379 -p 2380:2380 -v /root/etcd/:/var/etcd/data/ --restart=always --name=etcd ccchieh/etcd \
---name n1 \
---initial-advertise-peer-urls http://${LOCAL_IP}:2380 \
---listen-peer-urls http://0.0.0.0:2380 \
---advertise-client-urls http://${LOCAL_IP}:2379 \
---listen-client-urls http://0.0.0.0:2379 \
---initial-cluster n0=http://192.168.0.115:2380,n1=http://192.168.0.116:2380 \
---initial-cluster-state existing \
---initial-cluster-token workshop
+docker run -itd -p 2379:2379 -p 2380:2380 -v /root/etcd/:/var/etcd/data/ \
+-e ETCD_HOST=${ETCD_HOST} \
+-e ETCD_NAME=etcd2 \
+-e ETCD_INITIAL_CLUSTER_STATE=existing \
+-e ETCD_INITIAL_CLUSTER_token=clusterToken \
+-e ETCD_INITIAL_CLUSTER="n0=http://192.168.0.115:2380,n1=http://192.168.0.116:2380" \
+--restart=always --name=etcd ccchieh/etcd
 ```
 
-## 停止
+## 相关命令
+1. 停止`docker stop etcd && docker rm etcd && rm -rf /root/etcd/`
+2. 查看集群列表`docker exec -it etcd etcdctl list`
 
-docker stop etcd && docker rm etcd && rm -rf /root/etcd/
 
 etcd-v3.3.24
